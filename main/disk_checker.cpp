@@ -4,51 +4,51 @@ disk_checker::disk_checker(){}
 
 disk_checker::~disk_checker()
 {
-    if (volume != INVALID_HANDLE_VALUE) // если открытие "ОК"
-        CloseHandle(volume); // закрытие открытого дескриптора
+    if (volume != INVALID_HANDLE_VALUE) // РµСЃР»Рё РѕС‚РєСЂС‹С‚РёРµ "РћРљ"
+        CloseHandle(volume); // Р·Р°РєСЂС‹С‚РёРµ РѕС‚РєСЂС‹С‚РѕРіРѕ РґРµСЃРєСЂРёРїС‚РѕСЂР°
 }
 
-bool disk_checker::CheckDiskIntegrity(char driveLetter) // функция проверки доступности 
+bool disk_checker::CheckDiskIntegrity(char driveLetter) // С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё РґРѕСЃС‚СѓРїРЅРѕСЃС‚Рё 
 {
-    std::string drivePath = "\\\\.\\" + std::string(1, driveLetter) + ":"; // времення строка из 1 символа
-    // формируем путь к диску прямого доступа "\.\С:"
+    std::string drivePath = "\\\\.\\" + std::string(1, driveLetter) + ":"; // РІСЂРµРјРµРЅРЅСЏ СЃС‚СЂРѕРєР° РёР· 1 СЃРёРјРІРѕР»Р°
+    // С„РѕСЂРјРёСЂСѓРµРј РїСѓС‚СЊ Рє РґРёСЃРєСѓ РїСЂСЏРјРѕРіРѕ РґРѕСЃС‚СѓРїР° "\.\РЎ:"
 
-    volume = CreateFileA( // создание/открытие файла
-        drivePath.c_str(), // путь, который нужно открыть
-        GENERIC_READ | GENERIC_WRITE, // можно читать и записывать
-        FILE_SHARE_READ | FILE_SHARE_WRITE, // для доступа работы другим процессам
-        NULL, // атрибут безопасности
-        OPEN_EXISTING, // указываем на открытие существующего файла
-        FILE_FLAG_WRITE_THROUGH | FILE_FLAG_NO_BUFFERING, // храниние и буферизация при операциях
-        NULL // атрибут шаблон файла
+    volume = CreateFileA( // СЃРѕР·РґР°РЅРёРµ/РѕС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р°
+        drivePath.c_str(), // РїСѓС‚СЊ, РєРѕС‚РѕСЂС‹Р№ РЅСѓР¶РЅРѕ РѕС‚РєСЂС‹С‚СЊ
+        GENERIC_READ | GENERIC_WRITE, // РјРѕР¶РЅРѕ С‡РёС‚Р°С‚СЊ Рё Р·Р°РїРёСЃС‹РІР°С‚СЊ
+        FILE_SHARE_READ | FILE_SHARE_WRITE, // РґР»СЏ РґРѕСЃС‚СѓРїР° СЂР°Р±РѕС‚С‹ РґСЂСѓРіРёРј РїСЂРѕС†РµСЃСЃР°Рј
+        NULL, // Р°С‚СЂРёР±СѓС‚ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
+        OPEN_EXISTING, // СѓРєР°Р·С‹РІР°РµРј РЅР° РѕС‚РєСЂС‹С‚РёРµ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ С„Р°Р№Р»Р°
+        FILE_FLAG_WRITE_THROUGH | FILE_FLAG_NO_BUFFERING, // С…СЂР°РЅРёРЅРёРµ Рё Р±СѓС„РµСЂРёР·Р°С†РёСЏ РїСЂРё РѕРїРµСЂР°С†РёСЏС…
+        NULL // Р°С‚СЂРёР±СѓС‚ С€Р°Р±Р»РѕРЅ С„Р°Р№Р»Р°
     );
 
-    if (volume == INVALID_HANDLE_VALUE) // если у дескриптора ошибка при открытии 
+    if (volume == INVALID_HANDLE_VALUE) // РµСЃР»Рё Сѓ РґРµСЃРєСЂРёРїС‚РѕСЂР° РѕС€РёР±РєР° РїСЂРё РѕС‚РєСЂС‹С‚РёРё 
     {
-        lastErrorCode = GetLastError(); // вернуть последнюю ошибку в рамках текущего потока
-        return false; // ошибка в процессе работы
+        lastErrorCode = GetLastError(); // РІРµСЂРЅСѓС‚СЊ РїРѕСЃР»РµРґРЅСЋСЋ РѕС€РёР±РєСѓ РІ СЂР°РјРєР°С… С‚РµРєСѓС‰РµРіРѕ РїРѕС‚РѕРєР°
+        return false; // РѕС€РёР±РєР° РІ РїСЂРѕС†РµСЃСЃРµ СЂР°Р±РѕС‚С‹
     }
 
     DWORD bytesReturned;
     BOOL result = DeviceIoControl(
-        volume,  // дескриптор, куда отправлен код
-        IOCTL_DISK_IS_WRITABLE, // нужно выполнить проверку
-        NULL, // указат доп вход данные
-        0, // размер вход данных
-        NULL, // указат доп выход данные
-        0, // размер выход данных
-        &bytesReturned, // указат на переменную, в кот сохранено кол-во байт
-        NULL // не асинхронная операция
+        volume,  // РґРµСЃРєСЂРёРїС‚РѕСЂ, РєСѓРґР° РѕС‚РїСЂР°РІР»РµРЅ РєРѕРґ
+        IOCTL_DISK_IS_WRITABLE, // РЅСѓР¶РЅРѕ РІС‹РїРѕР»РЅРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ
+        NULL, // СѓРєР°Р·Р°С‚ РґРѕРї РІС…РѕРґ РґР°РЅРЅС‹Рµ
+        0, // СЂР°Р·РјРµСЂ РІС…РѕРґ РґР°РЅРЅС‹С…
+        NULL, // СѓРєР°Р·Р°С‚ РґРѕРї РІС‹С…РѕРґ РґР°РЅРЅС‹Рµ
+        0, // СЂР°Р·РјРµСЂ РІС‹С…РѕРґ РґР°РЅРЅС‹С…
+        &bytesReturned, // СѓРєР°Р·Р°С‚ РЅР° РїРµСЂРµРјРµРЅРЅСѓСЋ, РІ РєРѕС‚ СЃРѕС…СЂР°РЅРµРЅРѕ РєРѕР»-РІРѕ Р±Р°Р№С‚
+        NULL // РЅРµ Р°СЃРёРЅС…СЂРѕРЅРЅР°СЏ РѕРїРµСЂР°С†РёСЏ
     );
 
     if (result)
     {
-        return true; // "ОК"
+        return true; // "РћРљ"
     }
     else
     {
         lastErrorCode = GetLastError();
-        return false; // "НЕ ОК"
+        return false; // "РќР• РћРљ"
     }
 }
 
@@ -66,14 +66,14 @@ ULONGLONG disk_checker::GetFreeClusters(char driveLetter)
     ULONGLONG bytesPerSector = 0;
 
     BOOL result = GetDiskFreeSpaceExA(
-        drivePath.c_str(), // путь к диску
+        drivePath.c_str(), // РїСѓС‚СЊ Рє РґРёСЃРєСѓ
         reinterpret_cast<PULARGE_INTEGER>(&freeClusters),
         reinterpret_cast<PULARGE_INTEGER>(&totalClusters),
         reinterpret_cast<PULARGE_INTEGER>(&sectorsPerCluster)
     );
     if (result)
     {
-        return freeClusters; // вернуть кол-во памяти свобод
+        return freeClusters; // РІРµСЂРЅСѓС‚СЊ РєРѕР»-РІРѕ РїР°РјСЏС‚Рё СЃРІРѕР±РѕРґ
     }
     else
     {
@@ -97,7 +97,7 @@ ULONGLONG disk_checker::GetUsedClusters(char driveLetter)
 
     if (result)
     {
-        usedClusters = totalClusters - freeClusters; // используемая память
+        usedClusters = totalClusters - freeClusters; // РёСЃРїРѕР»СЊР·СѓРµРјР°СЏ РїР°РјСЏС‚СЊ
     }
 
     return usedClusters;
@@ -106,41 +106,41 @@ ULONGLONG disk_checker::GetUsedClusters(char driveLetter)
 ULONGLONG disk_checker::GetDiskSpace(char driveLetter)
 {
     std::string rootPath = std::string(1, driveLetter) + ":\\";
-    ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes; // большой формат - кол-во сохранено кол-во байт
+    ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes; // Р±РѕР»СЊС€РѕР№ С„РѕСЂРјР°С‚ - РєРѕР»-РІРѕ СЃРѕС…СЂР°РЅРµРЅРѕ РєРѕР»-РІРѕ Р±Р°Р№С‚
 
     if (GetDiskFreeSpaceExA(rootPath.c_str(), &freeBytesAvailable, &totalNumberOfBytes, &totalNumberOfFreeBytes)) // 
     {
-        ULONGLONG totalSpace = totalNumberOfBytes.QuadPart; // кол-во всего памяти
+        ULONGLONG totalSpace = totalNumberOfBytes.QuadPart; // РєРѕР»-РІРѕ РІСЃРµРіРѕ РїР°РјСЏС‚Рё
         return totalSpace; // 
     }
     else
     {
-        std::cout << "Не удалось получить информацию о свободном пространстве на диске '" << driveLetter << "':" << std::endl << std::endl;
+        std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃРІРѕР±РѕРґРЅРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ РЅР° РґРёСЃРєРµ '" << driveLetter << "':" << std::endl << std::endl;
         return 0;
     }
 }
 
 bool disk_checker::IsNTFSFileSystem(const std::string& directory)
 {
-    std::string rootPath = directory.substr(0, 3);  // Получаем корневой путь диска (например, "C:\\")
-    // извлекаем первые 3 символа из строки directory
+    std::string rootPath = directory.substr(0, 3);  // РџРѕР»СѓС‡Р°РµРј РєРѕСЂРЅРµРІРѕР№ РїСѓС‚СЊ РґРёСЃРєР° (РЅР°РїСЂРёРјРµСЂ, "C:\\")
+    // РёР·РІР»РµРєР°РµРј РїРµСЂРІС‹Рµ 3 СЃРёРјРІРѕР»Р° РёР· СЃС‚СЂРѕРєРё directory
 
-    DWORD fileSystemFlags = 0; // для флагов ФС
-    char volumeNameBuffer[MAX_PATH]; // название тома
-    DWORD volumeSerialNumber = 0; // серийник тома
-    DWORD maximumComponentLength = 0; // макс длина имени
+    DWORD fileSystemFlags = 0; // РґР»СЏ С„Р»Р°РіРѕРІ Р¤РЎ
+    char volumeNameBuffer[MAX_PATH]; // РЅР°Р·РІР°РЅРёРµ С‚РѕРјР°
+    DWORD volumeSerialNumber = 0; // СЃРµСЂРёР№РЅРёРє С‚РѕРјР°
+    DWORD maximumComponentLength = 0; // РјР°РєСЃ РґР»РёРЅР° РёРјРµРЅРё
 
-    if (GetVolumeInformationA( // инфа о томе
-        rootPath.c_str(), // путь 
-        volumeNameBuffer, // имя тома
-        sizeof(volumeNameBuffer), // размер буфера
-        &volumeSerialNumber, // сохранение серийника
-        &maximumComponentLength, // макс длина ФС
-        &fileSystemFlags, // флаги ФС
-        nullptr, // метка тома
-        0)) // размер доп данных
+    if (GetVolumeInformationA( // РёРЅС„Р° Рѕ С‚РѕРјРµ
+        rootPath.c_str(), // РїСѓС‚СЊ 
+        volumeNameBuffer, // РёРјСЏ С‚РѕРјР°
+        sizeof(volumeNameBuffer), // СЂР°Р·РјРµСЂ Р±СѓС„РµСЂР°
+        &volumeSerialNumber, // СЃРѕС…СЂР°РЅРµРЅРёРµ СЃРµСЂРёР№РЅРёРєР°
+        &maximumComponentLength, // РјР°РєСЃ РґР»РёРЅР° Р¤РЎ
+        &fileSystemFlags, // С„Р»Р°РіРё Р¤РЎ
+        nullptr, // РјРµС‚РєР° С‚РѕРјР°
+        0)) // СЂР°Р·РјРµСЂ РґРѕРї РґР°РЅРЅС‹С…
     {
-        return (fileSystemFlags & FILE_NAMED_STREAMS) != 0;  // Проверяем наличие флага FILE_NAMED_STREAMS, характерного для NTFS
+        return (fileSystemFlags & FILE_NAMED_STREAMS) != 0;  // РџСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ С„Р»Р°РіР° FILE_NAMED_STREAMS, С…Р°СЂР°РєС‚РµСЂРЅРѕРіРѕ РґР»СЏ NTFS
         // true == ntfs
     }
 
