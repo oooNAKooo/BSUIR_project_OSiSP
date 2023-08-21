@@ -8,22 +8,22 @@ scan_file_system::scan_file_system() {}
 scan_file_system::~scan_file_system() {}
 
 void scan_file_system::ScanFileSystem(const std::string& directory) {
-    std::string searchPath = directory + "\\*"; // формируем путь для поиска файлов и директорий
-    WIN32_FIND_DATAA fileInfo; // используем для взятия информации о файле
-    HANDLE searchHandle = FindFirstFileA(searchPath.c_str(), &fileInfo); // указатель на дескриптор 
-    if (searchHandle != INVALID_HANDLE_VALUE) // проверка успешного открытия поиска
-        // до недействительного значения дескриптора
+    std::string searchPath = directory + "\\*"; // С„РѕСЂРјРёСЂСѓРµРј РїСѓС‚СЊ РґР»СЏ РїРѕРёСЃРєР° С„Р°Р№Р»РѕРІ Рё РґРёСЂРµРєС‚РѕСЂРёР№
+    WIN32_FIND_DATAA fileInfo; // РёСЃРїРѕР»СЊР·СѓРµРј РґР»СЏ РІР·СЏС‚РёСЏ РёРЅС„РѕСЂРјР°С†РёРё Рѕ С„Р°Р№Р»Рµ
+    HANDLE searchHandle = FindFirstFileA(searchPath.c_str(), &fileInfo); // СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґРµСЃРєСЂРёРїС‚РѕСЂ 
+    if (searchHandle != INVALID_HANDLE_VALUE) // РїСЂРѕРІРµСЂРєР° СѓСЃРїРµС€РЅРѕРіРѕ РѕС‚РєСЂС‹С‚РёСЏ РїРѕРёСЃРєР°
+        // РґРѕ РЅРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РґРµСЃРєСЂРёРїС‚РѕСЂР°
         {
             do
             {
-                std::string fileName = fileInfo.cFileName; // получение имени файла из структуры WIN32_FIND_DATAA
-                if (!(fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) // проверка того, что это не папка
+                std::string fileName = fileInfo.cFileName; // РїРѕР»СѓС‡РµРЅРёРµ РёРјРµРЅРё С„Р°Р№Р»Р° РёР· СЃС‚СЂСѓРєС‚СѓСЂС‹ WIN32_FIND_DATAA
+                if (!(fileInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) // РїСЂРѕРІРµСЂРєР° С‚РѕРіРѕ, С‡С‚Рѕ СЌС‚Рѕ РЅРµ РїР°РїРєР°
                 {
-                    std::string filePath = directory + "\\" + fileName; // путь
-                    ULONGLONG fileSize = static_cast<ULONGLONG>(fileInfo.nFileSizeLow) | (static_cast<ULONGLONG>(fileInfo.nFileSizeHigh) << 32); // для получения размера
-                    // ULONGLONG позволяет работать с размерами файлов >4 Гб
-                    // проверка расширений файлов
-                    if (fileName.substr(fileName.length() - 5) == ".docx" || //  начинаем с 5 символа
+                    std::string filePath = directory + "\\" + fileName; // РїСѓС‚СЊ
+                    ULONGLONG fileSize = static_cast<ULONGLONG>(fileInfo.nFileSizeLow) | (static_cast<ULONGLONG>(fileInfo.nFileSizeHigh) << 32); // РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂР°Р·РјРµСЂР°
+                    // ULONGLONG РїРѕР·РІРѕР»СЏРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ СЃ СЂР°Р·РјРµСЂР°РјРё С„Р°Р№Р»РѕРІ >4 Р“Р±
+                    // РїСЂРѕРІРµСЂРєР° СЂР°СЃС€РёСЂРµРЅРёР№ С„Р°Р№Р»РѕРІ
+                    if (fileName.substr(fileName.length() - 5) == ".docx" || //  РЅР°С‡РёРЅР°РµРј СЃ 5 СЃРёРјРІРѕР»Р°
                         fileName.substr(fileName.length() - 5) == ".xlsx" ||
                         fileName.substr(fileName.length() - 4) == ".pdf" ||
                         fileName.substr(fileName.length() - 4) == ".jpg" ||
@@ -31,55 +31,55 @@ void scan_file_system::ScanFileSystem(const std::string& directory) {
                         fileName.substr(fileName.length() - 4) == ".rar" ||
                         fileName.substr(fileName.length() - 4) == ".zip")
                     {
-                        std::ifstream file(filePath, std::ios::binary); // путь в бинарном формате
+                        std::ifstream file(filePath, std::ios::binary); // РїСѓС‚СЊ РІ Р±РёРЅР°СЂРЅРѕРј С„РѕСЂРјР°С‚Рµ
                         if (file)
                         {
-                            char signature[4]; // массив для хранения сигнатуры
-                            file.read(signature, 4); // чтение первых 4 байт файла
+                            char signature[4]; // РјР°СЃСЃРёРІ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СЃРёРіРЅР°С‚СѓСЂС‹
+                            file.read(signature, 4); // С‡С‚РµРЅРёРµ РїРµСЂРІС‹С… 4 Р±Р°Р№С‚ С„Р°Р№Р»Р°
                             file.close();
-                            // сохраняем 4 символов, потом сравниваем их с начальной сигнатурой
-                            // РК - первые 2 символа сигнатуры
-                            // х03\х04 - вторые 2 символа форматов
-                            if (std::string(signature, 4) != "PK\x03\x04") // Проверка сигнатуры файла
+                            // СЃРѕС…СЂР°РЅСЏРµРј 4 СЃРёРјРІРѕР»РѕРІ, РїРѕС‚РѕРј СЃСЂР°РІРЅРёРІР°РµРј РёС… СЃ РЅР°С‡Р°Р»СЊРЅРѕР№ СЃРёРіРЅР°С‚СѓСЂРѕР№
+                            // Р Рљ - РїРµСЂРІС‹Рµ 2 СЃРёРјРІРѕР»Р° СЃРёРіРЅР°С‚СѓСЂС‹
+                            // С…03\С…04 - РІС‚РѕСЂС‹Рµ 2 СЃРёРјРІРѕР»Р° С„РѕСЂРјР°С‚РѕРІ
+                            if (std::string(signature, 4) != "PK\x03\x04") // РџСЂРѕРІРµСЂРєР° СЃРёРіРЅР°С‚СѓСЂС‹ С„Р°Р№Р»Р°
                             {
-                                std::cout << "[Поврежденный файл] " << filePath << " (" << fileSize << " bytes)" << std::endl;
+                                std::cout << "[РџРѕРІСЂРµР¶РґРµРЅРЅС‹Р№ С„Р°Р№Р»] " << filePath << " (" << fileSize << " bytes)" << std::endl;
                             }
                             else
                             {
-                                std::cout << "[Файл] " << filePath << " (" << fileSize << " bytes)" << std::endl;
+                                std::cout << "[Р¤Р°Р№Р»] " << filePath << " (" << fileSize << " bytes)" << std::endl;
                             }
                         }
                     }
                 }
-                else // если это директория
+                else // РµСЃР»Рё СЌС‚Рѕ РґРёСЂРµРєС‚РѕСЂРёСЏ
                 {
-                    if (fileName != "." && fileName != "..") // . - текущий каталог, .. - родительский каталог
+                    if (fileName != "." && fileName != "..") // . - С‚РµРєСѓС‰РёР№ РєР°С‚Р°Р»РѕРі, .. - СЂРѕРґРёС‚РµР»СЊСЃРєРёР№ РєР°С‚Р°Р»РѕРі
                     {
-                        std::string subdirectory = directory + "\\" + fileName; // путь к папке
-                        std::cout << "[Папка] " << subdirectory << std::endl;
-                        ScanFileSystem(subdirectory); // рекурсивный вызов функции для сканирования поддиректорий
+                        std::string subdirectory = directory + "\\" + fileName; // РїСѓС‚СЊ Рє РїР°РїРєРµ
+                        std::cout << "[РџР°РїРєР°] " << subdirectory << std::endl;
+                        ScanFileSystem(subdirectory); // СЂРµРєСѓСЂСЃРёРІРЅС‹Р№ РІС‹Р·РѕРІ С„СѓРЅРєС†РёРё РґР»СЏ СЃРєР°РЅРёСЂРѕРІР°РЅРёСЏ РїРѕРґРґРёСЂРµРєС‚РѕСЂРёР№
                     }
                 }
-            } while (FindNextFileA(searchHandle, &fileInfo)); // поиск следующего файла/директории
-            FindClose(searchHandle); // закрытие дескриптора для освобод ресов
+            } while (FindNextFileA(searchHandle, &fileInfo)); // РїРѕРёСЃРє СЃР»РµРґСѓСЋС‰РµРіРѕ С„Р°Р№Р»Р°/РґРёСЂРµРєС‚РѕСЂРёРё
+            FindClose(searchHandle); // Р·Р°РєСЂС‹С‚РёРµ РґРµСЃРєСЂРёРїС‚РѕСЂР° РґР»СЏ РѕСЃРІРѕР±РѕРґ СЂРµСЃРѕРІ
         }
 }
 
 bool scan_file_system::IsDriveAccessible(char driveLetter)
 {
     std::string rootPath = std::string(1, driveLetter) + ":\\";
-    UINT driveType = GetDriveTypeA(rootPath.c_str()); // получение типа диска
-    // для получения типа диска
-    // UINT - безнаковое положительно число
+    UINT driveType = GetDriveTypeA(rootPath.c_str()); // РїРѕР»СѓС‡РµРЅРёРµ С‚РёРїР° РґРёСЃРєР°
+    // РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ С‚РёРїР° РґРёСЃРєР°
+    // UINT - Р±РµР·РЅР°РєРѕРІРѕРµ РїРѕР»РѕР¶РёС‚РµР»СЊРЅРѕ С‡РёСЃР»Рѕ
 
-    if (driveType == DRIVE_UNKNOWN || driveType == DRIVE_NO_ROOT_DIR) // тип диска неизвестен || не корневой каталог
+    if (driveType == DRIVE_UNKNOWN || driveType == DRIVE_NO_ROOT_DIR) // С‚РёРї РґРёСЃРєР° РЅРµРёР·РІРµСЃС‚РµРЅ || РЅРµ РєРѕСЂРЅРµРІРѕР№ РєР°С‚Р°Р»РѕРі
     {
-        std::cout << "При анализе диска '" << driveLetter << "' возникла ошибка." << std::endl << std::endl;
+        std::cout << "РџСЂРё Р°РЅР°Р»РёР·Рµ РґРёСЃРєР° '" << driveLetter << "' РІРѕР·РЅРёРєР»Р° РѕС€РёР±РєР°." << std::endl << std::endl;
         return false;
     }
     else
     {
-        std::cout << "Диск '" << driveLetter << "': доступен." << std::endl << std::endl;
+        std::cout << "Р”РёСЃРє '" << driveLetter << "': РґРѕСЃС‚СѓРїРµРЅ." << std::endl << std::endl;
         return true;
     }
 }
