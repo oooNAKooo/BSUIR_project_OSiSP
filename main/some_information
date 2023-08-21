@@ -1,4 +1,98 @@
-  В каждом файле имеются подробные комментарии к коду. Однако, я добавлю немного теории, дабы разбавить код).
+EN:
+
+Each file has detailed comments on the code. However, I will add a little theory to thin out the code).
+
+  NTFS (New Technology File System) is a file system developed by Microsoft for Windows NT operating systems, including Windows XP, Windows Vista, Windows 7, Windows 8, and Windows 10. It offers several features and improvements over the older FAT (File Allocation Table) file system, such as increased reliability, security, and support for larger file and partition sizes.
+
+  Here are some key features and characteristics of NTFS:
+
+1) File and Directory Structure: NTFS uses a hierarchical file system with directories (folders) and files. Directories can contain other directories and files, which allows data to be structured.
+
+2) File Attributes: NTFS supports various file attributes, including read-only, hidden, system, compressed, encrypted, and sparse. These attributes provide additional control over file access and management.
+
+3) File Security: NTFS includes built-in file security features that allow administrators to set access control lists (ACLs) for files and directories. This provides granular control over who can read, write, and execute files, providing a higher level of security.
+
+4) File compression: NTFS supports file compression, which allows files to be stored on disk in a compressed format. Compressed files take up less space, but accessing them may incur additional processing costs.
+
+5) File Encryption: NTFS includes file encryption capabilities using Encrypted File System (EFS). EFS allows users to encrypt individual files or directories to protect their data from unauthorized access.
+
+6) Disk Quotas: NTFS supports disk quotas, allowing administrators to limit the amount of disk space that users or groups can use. This helps manage disk usage and prevents individual users from monopolizing disk resources.
+
+7) Logging: NTFS uses a journaling system that helps ensure file system consistency in the event of a power failure or system crash. Logging records changes to the file system before they are committed, which provides faster recovery and reduces the risk of data corruption.
+
+8) Support for large media: NTFS supports very large file sizes (up to 16 exabytes) and partition sizes (up to 256 terabytes). This makes it suitable for modern high-capacity storage devices.
+
+Now about the file sizes that the NTFS system supported:
+
+1) Windows XP, Windows Server 2003: In these versions, the maximum file size is 16 terabytes (2^44 bytes).
+
+2) Windows Vista, Windows Server 2008 and later: In these versions, the maximum file size is 256 terabytes (2^48 bytes). However, the file size may be limited by the limitations of the operating system or file system tools.
+
+  A bit about file encryption in NTFS:
+
+1) Selecting files to encrypt: The user selects the files or folders he wants to encrypt using EFS.
+
+2) Key generation: The first time each file is encrypted, EFS generates a key pair: a public key and a private key. The public key is used to encrypt the data and the private key is stored in a secure form on the user's computer.
+
+3) File encryption: When a user encrypts a file, EFS uses the public key associated with the user's account to encrypt the contents of the file. As a result, the file becomes unintelligible and unreadable without the correct key to decrypt it.
+
+4) Saving an encrypted file: An encrypted file is saved on disk in an encrypted form. It can be labeled with a special icon or attribute indicating its encrypted status.
+
+5) File decryption: When an encrypted file is accessed, EFS automatically decrypts it using a private key stored in a secure form on the user's computer. In this way, the user is given access to the original contents of the file.
+
+  Now let's talk about access control system (ACL):
+
+1) Resource: A resource can be any object in the operating system to which you want to restrict access, such as a file, folder, printer, etc.
+
+2) Subject: A subject represents users or groups of users who request access to a resource. They can be local users or users from a domain on the network.
+
+3) Permission: Permission defines the type of access that a subject is allowed or denied to a resource. Some common permissions include read, write, execute, delete and modify permissions.
+
+4) ACL list: An ACL list is a data structure that contains entries (ACEs) that define subject-specific permissions for a particular resource. Each ACE record contains the subject identifier (SID) and the corresponding permissions.
+
+5) Subject Role: The subject role defines which permissions are applied when a subject attempts to access a resource. Roles such as owner, group, administrator, etc., can have different levels of access.
+
+One of the most useful technologies in the NTFS system is journaling. The main purpose of journaling is to ensure that in the event of a failure or power outage, the file system data remains in a consistent state and is not corrupted. Journaling allows the file system to recover from a failure by applying incomplete transactions that have been logged.
+
+  Differences between NTFS and FAT32:
+
+1) Reliability and resilience to failure: NTFS has higher reliability and resilience to system failure than FAT32. NTFS uses journaling to record changes before committing, which reduces the risk of data corruption during failures or power outages. FAT32 has no built-in journaling support and is more vulnerable to data loss on failures.
+
+2) Support for disk and file sizes: NTFS supports large disk and file sizes. It can handle partitions up to 256 terabytes in size and supports files up to 16 terabytes in size (depending on the operating system version). On the other hand, FAT32 has a file size limit of 4 gigabytes and partition size limit of 2 terabytes.
+
+3) Disk space efficiency: NTFS is more efficient in using disk space as compared to FAT32. NTFS has a smaller cluster size, which means less space wastage due to file fragmentation. FAT32, on the other hand, uses larger clusters, which can lead to more space loss for small files.
+
+4) Security: NTFS provides advanced security features through the use of access control lists (ACLs). With ACLs, access rights for files and folders can be managed at the user and group level, providing more granular control over data access. FAT32 lacks similar security functionality.
+
+5) Compatibility with different operating systems: FAT32 has wider compatibility with different operating systems such as Windows, macOS and Linux. NTFS, while supported by most versions of Windows, may have limited support or require third-party drivers to fully work on other operating systems.
+
+  And lastly, the pros and cons of the NTFS file system:
+
+    NTFS pros:
+
+1) Reliability: NTFS is highly reliable and resilient to failure.
+
+  It uses journaling to record changes before committing them, which reduces the risk of data loss in case of system crashes or power failure.  2) Security: NTFS provides advanced security features through access control lists (ACLs).With ACLs, you can manage access rights for files and folders at the user and group level, providing more granular control over data access.3) Support for large sizes: NTFS supports large disk and file sizes. It can handle partitions up to 256 terabytes in size and supports files up to 16 terabytes in size (depending on operating system version).
+
+4) Caching and Performance: NTFS has efficient caching and optimization mechanisms, which helps to improve the performance of file operations.
+
+5) Advanced Features: NTFS has a number of advanced features such as file encryption (using EFS), file compression, disk quota control and others. This allows the user to manage files and disks more efficiently.
+
+    Minuses of NTFS:
+
+1) Limited support for other operating systems: NTFS is a Microsoft proprietary file system and has limited support on other operating systems, especially some Linux distributions or macOS. While there are some third-party drivers and tools to work with NTFS on other platforms, they are not always fully compatible.
+
+2) Fragmentation: Long-term use and misconfiguration of NTFS can cause file fragmentation, which can adversely affect system performance. However, this can be resolved by regular use of file system defragmentation tools.
+
+3) Limited support for some older technologies: NTFS does not support some older technologies, such as file names using the 8.3 format that was characteristic of FAT file systems.
+
+  Overall, NTFS is a reliable and functional file system with advanced security features and support for large sizes. However, it may not be ideal for some situations, especially if you need to maximize compatibility with other operating systems or use outdated technology.
+
+P.s.: downloaded everything except the cache folder, which nobody needs.
+
+RU:
+
+В каждом файле имеются подробные комментарии к коду. Однако, я добавлю немного теории, дабы разбавить код).
 
   NTFS (файловая система новой технологии) — это файловая система, разработанная Microsoft для операционных систем Windows NT, включая Windows XP, Windows Vista, Windows 7, Windows 8 и Windows 10. Она предлагает несколько функций и улучшений по сравнению со старой FAT (File Allocation Table) файловой системы, такие как повышенная надежность, безопасность и поддержка больших размеров файлов и разделов.
 
