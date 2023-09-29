@@ -1,0 +1,7 @@
+RU:
+
+Заметил такую проблему, что при скачивании репозитория, меню программы выводит какую-то белеберду. Чтобы это исправить, замените все те файлы с выводом текста в консоль, на аналогичные(ctrl+c->del_file->create_new_file->ctrl+v). Тогда программа вновь правильно начнет функционировать.
+
+EN:
+
+I noticed a problem that when downloading the repository, the program menu displays some kind of nonsense. To fix this, replace all those files with text output to the console with similar ones (ctrl+c->del_file->create_new_file->ctrl+v). Then the program will start functioning correctly again.
